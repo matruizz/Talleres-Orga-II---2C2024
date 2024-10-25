@@ -55,11 +55,11 @@ dispositivo un Floppy Disk (el disquete en lugar del disco rígido como
 suele ser comúnmente). Para eso, vamos a utilizar una imagen Floppy Disk
 virtual en QEMU como dispositivo de booteo. En el primer sector del
 floppy, se almacena el boot-sector (sector de arranque). El BIOS se
-encarga de copiar a memoria 512 bytes del sector de booteo, y dejarlo a
-partir de la dirección `0x7C00`. Luego, se comienza a ejecutar el código a
+encarga de copiar a memoria 512 bytes == 1/2 KBi del sector de booteo, y dejarlo a
+partir de la dirección `0x7C00 == 31 KBi`. Luego, se comienza a ejecutar el código a
 partir de esta dirección. El boot-sector debe encontrar en el floppy el
 archivo `KERNEL.BIN` y copiarlo a memoria. Éste se copia a partir de la
-dirección `0x1200`, y luego se ejecuta a partir de esa misma dirección.
+dirección `0x1200 == 4,5 KBi`, y luego se ejecuta a partir de esa misma dirección.
 
 Es importante tener en cuenta que el código del boot-sector se encarga
 exclusivamente de copiar el kernel y dar el control al mismo, es decir,
