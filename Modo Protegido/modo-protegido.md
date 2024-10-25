@@ -46,8 +46,7 @@ Las preguntas a continuación las pueden responder inline o en otro archivo mark
 
 1. Explorando el manual Intel *Volumen 3: System Programming. Sección 2.2 Modes of Operation*. ¿A qué nos referimos con modo real y con modo protegido en un procesador Intel? ¿Qué particularidades tiene cada modo?
 
-Con modo real nos referimos a un estado en el que procesador puede funcionar, 
-Con modos de operación nos referimos a el conjunto de capacidades y recursos que un procesador tiene disponible para utilizar, en el modo real el procesador tiene las siguientes caracteristicas:
+Con modos de operación nos referimos a el conjunto de capacidades y recursos que un procesador tiene disponible para ser utilizados por el procesador como por un programador de sistema, en el modo real el procesador tiene las siguientes caracteristicas:
 - Trabaja por defecto en 16 bites.
 - En consecuencia puede direccionar solo 1 MBi de memoria. 
 - No cuenta con protección para ninguna región de memoria.
@@ -62,6 +61,8 @@ En cambio en modo protegido.
 - El set de instrucciones disponibles en un determinado momento depende del nivel de privilegio con el que se cuente en ese momento.
 
 2. Comenten en su equipo, ¿Por qué debemos hacer el pasaje de modo real a modo protegido? ¿No podríamos simplemente tener un sistema operativo en modo real? ¿Qué desventajas tendría?
+
+Para poder tener acceso a las caracteristicas y 
 
 Anteriormente, detallamos que la memoria es un arreglo continuo de bytes y que podemos segmentarla de acuerdo a tamaño, nivel de protección y uso. Debemos indicar al procesador la descripción de los segmentos, es decir, cómo están conformados los segmentos. Los ejercicios a continuación tienen que ver con el armado de la tabla de segmentos.
 
