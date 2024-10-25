@@ -45,6 +45,20 @@ Por una serie de razones técnicas, el modelo de memoria segmentada no suele uti
 Las preguntas a continuación las pueden responder inline o en otro archivo markdown. ¡Nada de pdfs o docx por favor!
 
 1. Explorando el manual Intel *Volumen 3: System Programming. Sección 2.2 Modes of Operation*. ¿A qué nos referimos con modo real y con modo protegido en un procesador Intel? ¿Qué particularidades tiene cada modo?
+Con modo real nos referimos a un estado en el que procesador puede funcionar, 
+Con modos de operación nos referimos a el conjunto de capacidades y recursos que un procesador tiene disponible para utilizar, en el modo real el procesador tiene las siguientes caracteristicas:
+- Trabaja por defecto en 16 bites.
+- En consecuencia puede direccionar solo 1 MBi de memoria. 
+- No cuenta con protección para ninguna región de memoria.
+- No cuenta con niveles de privilegio.
+- Cualquier usuario tiene acceso a todas las instrucciones del procesador.
+- Las interrupciones no tienen niveles de privilegio.
+En cambio en modo protegido.
+- Trabaja por defecto en 32 bits.
+- Se puede direccionar a 4 GBi de memoria.
+- Tiene 4 niveles de privilegio.
+- Las rutinas de atencion a interrupciones tienen niveles de privilegio.
+- El set de instrucciones disponibles en un determinado momento depende del nivel de privilegio con el que se cuente en ese momento.
 
 2. Comenten en su equipo, ¿Por qué debemos hacer el pasaje de modo real a modo protegido? ¿No podríamos simplemente tener un sistema operativo en modo real? ¿Qué desventajas tendría?
 
