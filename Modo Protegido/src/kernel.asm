@@ -11,8 +11,8 @@ global start
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
 extern GDT_DESC
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
-;%define CS_RING_0_SEL ??   
-;%define DS_RING_0_SEL ??   
+%define CS_RING_0_SEL (1 << 3) 
+%define DS_RING_0_SEL (3 << 3)
 
 
 BITS 16
@@ -51,7 +51,7 @@ start:
     ; COMPLETAR - Imprimir mensaje de bienvenida - MODO REAL
     ; (revisar las funciones definidas en print.mac y los mensajes se encuentran en la
     ; sección de datos)
-    print_text_rm start_rm_msg, start_rm_len, 5, 25, 40
+    print_text_rm start_rm_msg, start_rm_len, 5, 25, 25
 
 
     ; COMPLETAR - Habilitar A20
@@ -62,20 +62,32 @@ start:
     lgdt [GDT_DESC]
 
     ; COMPLETAR - Setear el bit PE del registro CR0
+    mov eax, cr0
+    or eax, 0x1
+    mov cr0, eax
 
     ; COMPLETAR - Saltar a modo protegido (far jump)
     ; (recuerden que un far jmp se especifica como jmp CS_selector:address)
     ; Pueden usar la constante CS_RING_0_SEL definida en este archivo
-
+    jmp CS_RING_0_SEL:modo_protegido
 BITS 32
 modo_protegido:
     ; COMPLETAR - A partir de aca, todo el codigo se va a ejectutar en modo protegido
     ; Establecer selectores de segmentos DS, ES, GS, FS y SS en el segmento de datos de nivel 0
     ; Pueden usar la constante DS_RING_0_SEL definida en este archivo
+    mov ax, DS_RING_0_SEL
+    mov ds, ax
+    mov es, ax
+    mov gs, ax
+    mov fs, ax
+    mov ss, ax
 
     ; COMPLETAR - Establecer el tope y la base de la pila
+    mov ebp, 0x25000
+    mov esp, 0x25000
 
     ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
+    print_text_pm start_pm_msg, start_pm_len, 5, 26, 25
 
     ; COMPLETAR - Inicializar pantalla
     

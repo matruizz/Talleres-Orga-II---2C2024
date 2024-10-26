@@ -47,7 +47,7 @@ gdt_entry_t gdt[GDT_COUNT] = {
             .l = 0x0,
             .db = 0x1,
             .g = 0x1,
-            .base_31_24 = GDT_BASE_HIGH(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .base_31_24 = GDT_BASE_HIGH(0),
         },
     [GDT_IDX_CODE_3] =
         {
@@ -63,7 +63,7 @@ gdt_entry_t gdt[GDT_COUNT] = {
             .l = 0x0,
             .db = 0x1,
             .g = 0x1,
-            .base_31_24 = GDT_BASE_HIGH(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .base_31_24 = GDT_BASE_HIGH(0),
         },
     [GDT_IDX_DATA_0] =
         {
@@ -79,7 +79,7 @@ gdt_entry_t gdt[GDT_COUNT] = {
             .l = 0x0,
             .db = 0x1,
             .g = 0x1,
-            .base_31_24 = GDT_BASE_HIGH(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .base_31_24 = GDT_BASE_HIGH(0),
         },
     [GDT_IDX_DATA_3] =
         {
@@ -95,8 +95,24 @@ gdt_entry_t gdt[GDT_COUNT] = {
             .l = 0x0,
             .db = 0x1,
             .g = 0x1,
-            .base_31_24 = GDT_BASE_HIGH(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
-        },    
+            .base_31_24 = GDT_BASE_HIGH(0),
+        },
+    [GDT_IDX_VIDEO] =
+        {
+            .limit_15_0 = GDT_LIMIT_LOW(GDT_LIMIT_BYTES(VIDEO_SEGM_SIZE)),
+            .base_15_0 = GDT_BASE_LOW(VIDEO),
+            .base_23_16 = GDT_BASE_MID(VIDEO),
+            .type = DESC_TYPE_READ_WRITE,
+            .s = DESC_CODE_DATA,
+            .dpl = 0x0,
+            .p = 0x1,
+            .limit_19_16 = GDT_LIMIT_HIGH(GDT_LIMIT_BYTES(VIDEO_SEGM_SIZE)),
+            .avl = 0x0,
+            .l = 0x0,
+            .db = 0x1,
+            .g = 0x0,
+            .base_31_24 = GDT_BASE_HIGH(VIDEO),
+        },
 };
 
 // Aca hay una inicializacion estatica de una structura que tiene su primer componente el tamano 
