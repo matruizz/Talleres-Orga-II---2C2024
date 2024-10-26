@@ -10,3 +10,4 @@
 *diskette.img
 *~
 *.elf
+.gdb_history
