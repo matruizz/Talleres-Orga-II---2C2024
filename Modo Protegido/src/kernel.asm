@@ -9,7 +9,7 @@ global start
 
 
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
-
+extern GDT_DESC
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 ;%define CS_RING_0_SEL ??   
 ;%define DS_RING_0_SEL ??   
@@ -35,24 +35,31 @@ start_pm_len equ    $ - start_pm_msg
 ;; Punto de entrada del kernel.
 BITS 16
 start:
+
     ; COMPLETAR - Deshabilitar interrupciones
-
-
-    ; Cambiar modo de video a 80 X 50
+    cli ;Pone un 0 en el bit 9 (if) del registro EFLAGS lo que desactiva la respuesta a interrupciones de hardware.
+        ;sti hace lo contrario
+    
+    ; Cambiar modo de video a 50 X 80
     mov ax, 0003h
     int 10h ; set mode 03h
     xor bx, bx
     mov ax, 1112h
     int 10h ; load 8x8 font
 
+    
     ; COMPLETAR - Imprimir mensaje de bienvenida - MODO REAL
     ; (revisar las funciones definidas en print.mac y los mensajes se encuentran en la
     ; sección de datos)
+    print_text_rm start_rm_msg, start_rm_len, 5, 25, 40
+
 
     ; COMPLETAR - Habilitar A20
     ; (revisar las funciones definidas en a20.asm)
+    call A20_enable
 
     ; COMPLETAR - Cargar la GDT
+    lgdt [GDT_DESC]
 
     ; COMPLETAR - Setear el bit PE del registro CR0
 
