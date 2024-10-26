@@ -53,6 +53,7 @@ Con modos de operación nos referimos a el conjunto de capacidades y recursos qu
 - No cuenta con niveles de privilegio.
 - Cualquier usuario tiene acceso a todas las instrucciones del procesador.
 - Las interrupciones no tienen niveles de privilegio.
+
 En cambio en modo protegido.
 - Trabaja por defecto en 32 bits.
 - Se puede direccionar a 4 GBi de memoria.
@@ -62,13 +63,23 @@ En cambio en modo protegido.
 
 2. Comenten en su equipo, ¿Por qué debemos hacer el pasaje de modo real a modo protegido? ¿No podríamos simplemente tener un sistema operativo en modo real? ¿Qué desventajas tendría?
 
-Para poder tener acceso a las caracteristicas y 
+Para poder tener acceso a las caracteristicas que pueden ofrecer los sistemas actuales, direccionar a mas de 1 MBi de memoria y mayor seguridad provista por los niveles de privilegio. Se puede tener un sistema operativo en modo real, de hecho es en ese modo en el que arrancan todos los procesadores de arquitectura x86. No tendria seguridad, y no se podria tener memorias ram de mas de 1 MBi de capacidad.
 
 Anteriormente, detallamos que la memoria es un arreglo continuo de bytes y que podemos segmentarla de acuerdo a tamaño, nivel de protección y uso. Debemos indicar al procesador la descripción de los segmentos, es decir, cómo están conformados los segmentos. Los ejercicios a continuación tienen que ver con el armado de la tabla de segmentos.
 
 3. Busquen el manual *volumen 3 de Intel en la sección 3.4.5 Segment Descriptors*. ¿Qué es la GDT? ¿Cómo es el formato de un descriptor de segmento, bit a bit? Expliquen brevemente para qué sirven los campos *Limit*, *Base*, *G*, *P*, *DPL*, *S*. También pueden referirse a los slides de la clase teórica, aunque recomendamos que se acostumbren a consultar el manual.
     
+    La GDT es la global descriptor table, es una estructura de memoria en que guarda los descriptores de segmento globales. 
+    Limit: En este campo se guardan la cantidad de unidades de bytes o 4KBi (dependiendo de la granularidad) menos 1 los que se puede accedesr en el segmento.
+    Base: Es la dirección física desde la cual empieza el segmento.
+    G: Si esta activada indica que cada elemento al que se accede es de 1 byte o de 4KBi.
+    P: Indica si el segmento esta presente en memoria ram o no.
+    DPL: Indica el nivel de privilegio que tiene que tener el segmento de codigo que esta tratando de acceder a el segmento descrito por este descriptor.
+    S: Indica si el segmento es de codigo o datos o si es un descriptor de sistema.
+
 4. La tabla de la sección 3.4.5.1 *Code- and Data-Segment Descriptor Types* del volumen 3 del manual del Intel nos permite completar el *Type*, los bits 11, 10, 9, 8. ¿Qué combinación de bits tendríamos que usar si queremos especificar un segmento para ejecución y lectura de código?
+
+1010    codigo, conforming, readible, acceced.
 
 ![](img/resolucion-dir-logica.png)
 
@@ -94,6 +105,8 @@ Ahora, trabajemos con el código provisto por la cátedra. Vamos a completar la 
 
 6. En el archivo `gdt.h` observen las estructuras: `struct gdt_descriptor_t` y el `struct gdt_entry_t`. ¿Qué creen que contiene la variable `extern gdt_entry_t gdt;` y `extern gdt_descriptor_t GDT_DESC;`?
 
+extern gdt_entry_t gdt; es la declaración de la gdt y extern gdt_descriptor_t GDT_DESC; es la declaración de la gdt.
+
 7. Buscar en el Volumen 3 del manual de Intel, sección 3.4.2 *Segment Selectors* el formato de los selectores de segmento. Observar en el archivo `defines.h` las constantes con los valores de distintos selectores de segmento posibles. Completen los defines faltantes en `defines.h` y entiendan la utilidad de las macros allí definidas. 
    **USAR LAS MACROS** para definir los campos de los entries de la gdt. En lo posible, no hardcodeen los números directamente en los campos.
 
@@ -106,6 +119,8 @@ Ahora, trabajemos con el código provisto por la cátedra. Vamos a completar la 
     *Hint*: investiguen para qué puede servir la instrucción **cli** en el manual 2.
 
 10. Busquen qué hace la instrucción LGDT en el Volumen 2 del manual de Intel. Expliquen con sus palabras para qué sirve esta instrucción. En el código, ¿qué estructura indica donde está almacenada la dirección desde la cual se carga la GDT y su tamaño? ¿dónde se inicializa en el código?
+
+LDGT carga el registro descriptor de la gdt con el artributo que pases como parametro a la funcion. La estructura que indica donde esta almacenada y cual es el tamaño de la gdt es GDT_DESC. El codigo se inicializa en gdt.c
 
 11. Completen el archivo `kernel.asm` en la sección de cargar la GDT usando lo averiguado en el punto 8 para cargar la GDT.
 
