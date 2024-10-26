@@ -142,17 +142,24 @@ Para pasar a modo protegido tenemos que completar los siguientes pasos:
 
 - Cargar los selectores de segmento restantes
 
-Recomendamos que también miren como referencia, el manual *volumen 3, sección 9.9.1 "Switching to Protected Mode"*. Tengan en cuenta, que algunos de los pasos que están ahí descritos, corresponden a paginación, que no estaremos activando aún. Los pasos que nos interesan ahora son: 1,2,3,4,5 y 9
+Recomendamos que también miren como referencia, el manual *volumen 3, sección 10.9.1 "Switching to Protected Mode"*. Tengan en cuenta, que algunos de los pasos que están ahí descritos, corresponden a paginación, que no estaremos activando aún. Los pasos que nos interesan ahora son: 1,2,3,4,5 y 9
 
 Ya hemos hecho los primeros, deshabilitar interrupciones y completar la GDT. También ya cargamos el registro GDTR correctamente. Ahora deberíamos, habilitar el modo protegido, hacer el *jmp far* y cargar los registros selectores de segmento.
 
 13. Investiguen en el manual de Intel *sección 2.5 Control Registers*, el registro CR0. ¿Deberíamos modificarlo para pasar a modo protegido? Si queremos modificar CR0, no podemos hacerlo directamente. Sólo mediante un MOV desde/hacia los registros de control (pueden leerlo en el manual en la sección citada).
 
+El registro cr0 contiene un conjunto de flags del sistema que permiten al procesador definir su modo de operación y sus estados. Para pasar a modo protegido tenemos que establecer en 1 el bit 0 del registro cr0 que corresponde al flag de PG protection enabled. Para modificar el cr0 solo podemos usar la instrucción mov desde y hacia el cr0. En modo protegido solo se puede leer y escribir el cr0 en nivel 0.
+
 14. A continuación, completen la sección del `kernel.asm` escribiendo un código que modifique CR0 para pasar a modo protegido. Tengan en cuenta las averiguaciones y comentarios del punto 13.
 
 15. Notemos que a continuación debe hacerse un jump far para posicionarse en el código de modo protegido. Miren el volumen 2 de Intel para ver los distintos tipos de JMPs disponibles y piensen cuál sería el formato adecuado. ¿Qué usarían como selector de segmento?
 
+Hay 4 tipos de jmps disponibles, near (salto a una direccion dentro del mismo segmento de codigo), short (short jump cuando esta limitado a -128, +127 del eip actual), far (salto a una direccion en otro segmento pero del mismo nivel de privilegio), y task switch (salto a una direccion presente en una tarea distinta).
+El mas aducado seria el jpm far porque saltamos a una direccion presente en otro segmento del mismo nivel de privilegio.
+
 16. Dentro del modo protegido, vamos a cargar los registros selectores de segmento (`DS`, `ES`, `GS`, `FS` y `SS`). Todos se van a iniciar en el segmento de datos de nivel 0. Para esto, completar el archivo `kernel.asm` dentro del código que se ejecuta ya en modo protegido (etiqueta `modo_protegido`)
+
+
 
 17. Setear la pila del kernel en la dirección `0x25000`. Configuren los registros que indican dónde está la base y el tope de la pila.
 
@@ -203,6 +210,8 @@ Se va a acceder a la pantalla por un mapeo a memoria. La dirección física dond
 La pantalla va a ser un arreglo de 50 filas x 80 columnas. En cada posición del arreglo va a haber 2 bytes que representan a una celda de la pantalla. Los colores y atributos se configuran acorde a una convención: [http://wiki.osdev.org/Text_UI](http://wiki.osdev.org/Text_UI)
 
 21. Declaren un segmento adicional que describa el área de la pantalla en memoria que pueda ser utilizado sólo por el kernel. ¿Qué tamaño deberá tener considerando lo descrito en el párrafo anterior? Si el buffer de la pantalla comienza en `0x000B8000`[^3], piensen cuál debería ser la base y el límite. El tipo de este segmento debe ser de datos de lectura/escritura. Finalmente, definan el segmento en el archivo `gdt.c`.
+
+Como la pantalla es de 50 x 80 y cada pixel tiene 2 bytes de tamaño, entonces el limite tiene que ser 50 * 80 * 2.
 
 22. Observen el método `screen_draw_box` en `screen.c` y la estructura `ca` en `screen.h` . ¿Qué creen que hace el método **screen_draw_box**? ¿Cómo hace para acceder a la pantalla? ¿Qué estructura usa para representar cada carácter de la pantalla y cuanto ocupa en memoria?
 
