@@ -1,8 +1,0 @@
-*.o
--f *.bin
--f *.tmp
--f kernel.sym
--f *.d
--f diskette.img
--rf *~
--f *.elf
