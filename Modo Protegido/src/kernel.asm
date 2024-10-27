@@ -10,6 +10,9 @@ global start
 
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
 extern GDT_DESC
+extern screen_draw_layout
+extern screen_draw_box
+
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 %define CS_RING_0_SEL (1 << 3) 
 %define DS_RING_0_SEL (3 << 3)
@@ -40,7 +43,7 @@ start:
     cli ;Pone un 0 en el bit 9 (if) del registro EFLAGS lo que desactiva la respuesta a interrupciones de hardware.
         ;sti hace lo contrario
     
-    ; Cambiar modo de video a 50 X 80
+    ; Cambiar modo de video a 80 X 50
     mov ax, 0003h
     int 10h ; set mode 03h
     xor bx, bx
@@ -90,7 +93,7 @@ modo_protegido:
     print_text_pm start_pm_msg, start_pm_len, 5, 26, 25
 
     ; COMPLETAR - Inicializar pantalla
-    
+    call screen_draw_layout
    
     ; Ciclar infinitamente 
     mov eax, 0xFFFF

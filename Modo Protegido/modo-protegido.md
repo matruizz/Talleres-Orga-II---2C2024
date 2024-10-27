@@ -215,9 +215,20 @@ Como la pantalla es de 50 x 80 y cada pixel tiene 2 bytes de tamaño, entonces e
 
 22. Observen el método `screen_draw_box` en `screen.c` y la estructura `ca` en `screen.h` . ¿Qué creen que hace el método **screen_draw_box**? ¿Cómo hace para acceder a la pantalla? ¿Qué estructura usa para representar cada carácter de la pantalla y cuanto ocupa en memoria?
 
+Screen_draw_box printea un rectangulo de fSize x cSize de el caracter y atributos pasados por parametro dentro del area de memoria destinada para la pantalla. Para acceder a pantalla apunta a la direccion fisica en donde empieza el segmento de memoria destinada a la pantalla B8000. Para representar cada caracter utiliza el struc ca que si bien ocupa 2 bytes por cada elemento ca, la memoria de video ya esta alocada y tiene un tamaño de 50*80*2 bytes.
+
 23. Escriban una rutina `screen_draw_layout` que se encargue de limpiar la pantalla y escribir el nombre de los integrantes del grupo (o lo que deseen) en la misma en el archivo `screen.c` y llamen a dicho método desde `kernel.asm`. Pueden usar diferentes fondos, colores e incorporar dibujos si así lo quisieran.
 
 24. Resumen final, discutan en el grupo qué pasos tuvieron que hacer para activar el procesador en modo protegido. Repasen todo el código que estuvieron completando y traten de comprenderlo en detalle ¿Qué cosas les parecieron más interesantes?
+
+Los pasos que tuvimos que hacer fueron:
+
+-Desactivar interrupciones.
+-Activar A20 (bit 21 del bus de address).
+-Cargar el ldtr.
+-Establecer los descriptores de segmento de la gdt que queremos tener.
+-Setear el bit 0 del CR0 (protected mode enable).
+-Hacer jump far al segmento de codigo de nivel 0 con el offset dado por la etiqueta modo protegido.
 
 > **Nota:** Si bien el código que están escribiendo es muy simple, es importante que lo hagan con cuidado y que se aseguren de que cada paso esté funcionando correctamente antes de pasar al siguiente. Si tienen dudas, no duden en consultar a los docentes.
 
