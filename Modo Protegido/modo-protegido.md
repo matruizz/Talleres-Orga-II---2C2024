@@ -224,10 +224,15 @@ Screen_draw_box printea un rectangulo de fSize x cSize de el caracter y atributo
 Los pasos que tuvimos que hacer fueron:
 
 -Desactivar interrupciones.
+
 -Activar A20 (bit 21 del bus de address).
+
 -Cargar el ldtr.
+
 -Establecer los descriptores de segmento de la gdt que queremos tener.
+
 -Setear el bit 0 del CR0 (protected mode enable).
+
 -Hacer jump far al segmento de codigo de nivel 0 con el offset dado por la etiqueta modo protegido.
 
 > **Nota:** Si bien el código que están escribiendo es muy simple, es importante que lo hagan con cuidado y que se aseguren de que cada paso esté funcionando correctamente antes de pasar al siguiente. Si tienen dudas, no duden en consultar a los docentes.
