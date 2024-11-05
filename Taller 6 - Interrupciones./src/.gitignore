@@ -2,3 +2,12 @@
 *.tsk
 *.sym
 *.img
+*.o
+*.bin
+*.tmp
+*kernel.sym
+*.d
+*diskette.img
+*~
+*.elf
+.gdb_history

@@ -11,8 +11,13 @@ global start
 
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
 extern GDT_DESC
+
+
 extern screen_draw_layout
-extern screen_draw_box
+
+
+extern idt_init
+extern IDT_DESC
 
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
@@ -101,7 +106,8 @@ modo_protegido:
 ;-----------------------------------------------------------------------------------------------------------------------------;
 
     ; COMPLETAR - Inicializar y cargar la IDT
-    lidt [IDT_DESC]
+    call idt_init   ;Inicializamos la idt
+    lidt [IDT_DESC] ;Cargamos el descriptor de idt en el registro idtr
 
     ; COMPLETAR - Reiniciar y habilitar el controlador de interrupciones
 

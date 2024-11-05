@@ -40,10 +40,10 @@ TALLER System Programming - Arquitectura y Organizacion de Computadoras - FCEN
  * Definirlos a partir de los índices de la GDT, definidos más arriba 
  * Hint: usar operadores "<<" y "|" (shift y or) */
 
-#define GDT_CODE_0_SEL (GDT_IDX_CODE_0 << 3);
-#define GDT_DATA_0_SEL (GDT_IDX_DATA_0 << 3);
-#define GDT_CODE_3_SEL (GDT_IDX_CODE_3 << 3) | 3;
-#define GDT_DATA_3_SEL (GDT_IDX_DATA_3 << 3) | 3;
+#define GDT_CODE_0_SEL (GDT_IDX_CODE_0 << 3)
+#define GDT_DATA_0_SEL (GDT_IDX_DATA_0 << 3)
+#define GDT_CODE_3_SEL (GDT_IDX_CODE_3 << 3) | 3
+#define GDT_DATA_3_SEL (GDT_IDX_DATA_3 << 3) | 3
 
 // Macros para trabajar con segmentos de la GDT.
 
