@@ -122,14 +122,33 @@ ISRNE 20
 global _isr32
 ; COMPLETAR: Implementar la rutina
 _isr32:
-    iret
+
+  pushad
+  call pic_finish1
+
+  call next_clock
+  popad
+  iret
 
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 global _isr33
 ; COMPLETAR: Implementar la rutina
 _isr33:
-    iret
+
+  pushad
+
+  call pic_finish1
+
+  xor eax, eax    ;Limpio el eax
+  in al, 0x60     ;Leemos un byte por eso uso al
+
+  push eax
+  call process_scancode
+  pop eax
+
+  popad
+  iret
 
 
 ;; Rutinas de atención de las SYSCALLS
@@ -138,12 +157,19 @@ _isr33:
 global _isr88
 ; COMPLETAR: Implementar la rutina
 _isr88:
-    iret
+
+    ;No hago popad porque justamente quiero que el eax quede modificado
+  mov eax, 0x58
+
+  iret
 
 global _isr98
 ; COMPLETAR: Implementar la rutina
 _isr98:
-    iret
+
+    ;No hago popad porque justamente quiero que el eax quede modificado
+  mov eax, 0x62    
+  iret
 
 ; PushAD Order
 %define offset_EAX 28

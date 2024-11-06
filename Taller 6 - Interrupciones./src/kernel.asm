@@ -19,6 +19,9 @@ extern screen_draw_layout
 extern idt_init
 extern IDT_DESC
 
+extern pic_reset
+extern pic_enable
+
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 %define CS_RING_0_SEL (1 << 3) 
@@ -110,14 +113,20 @@ modo_protegido:
     lidt [IDT_DESC] ;Cargamos el descriptor de idt en el registro idtr
 
     ; COMPLETAR - Reiniciar y habilitar el controlador de interrupciones
+    call pic_reset
+    call pic_enable
+    sti
 
     ; COMPLETAR - Habilitar interrupciones
     ; NOTA: Pueden chequear que las interrupciones funcionen forzando a que se
     ;       dispare alguna excepción (lo más sencillo es usar la instrucción
     ;       `int3`)
     ;int3
+    
 
     ; Probar Sys_call
+    int 88
+    int 98
 
     ; Probar generar una excepción
 
