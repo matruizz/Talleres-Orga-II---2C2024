@@ -50,6 +50,15 @@ En el archivo idt.c pueden encontrar la definición de cada una de las entradas 
 
 a) :pen_fountain: Observen que la macro `IDT_ENTRY0` corresponde a cada entrada de la IDT de nivel 0 ¿A qué se refiere cada campo? ¿Qué valores toma el campo offset?
 
+-P: Indica si el segmento correspondiente al codigo de la rutina de atención a la interrupción número está presente en memoria o no.
+-DPL: Es el nivel de privilegio del descriptor de segmento.
+-S: 0 indica que el descriptor de segmeto describe un segmento de sistema.
+-D: Indica si es segmento es de 16 o 32 bits.
+-Tipo: son 4 bits que indican que tipo de segmento describe la entrada de la idt (interrupción, tarea o excepción).
+-Selector de segmento: Corresponde al selector de segmento de la dirección lógica que es pasada a la unidad de segmentación, junto con el offset, indica que índice correspondiente al descriptor de segmento de la gdt, el requested privilege level (nivel de privilegio que tienen que tener el que solicita acceso a este segmento) y el indicador de que tabla.
+-Offset: Indica el offset dentro del segmento desde donde inicia el código de la rutina de atención.
+El campo offset puede tomar valores desde el 0 hasta (1024-1), que son los índices posibles del un byte dentro de un segmento de 4kBi.
+
 Pueden ayudarse de la siguiente figura.
 Observen que los atributos son los bits 15 a 5 de la palabra de 32 bits superior.
 
@@ -60,9 +69,14 @@ Observen que los atributos son los bits 15 a 5 de la palabra de 32 bits superior
 b) :pen_fountain: Completar los campos de Selector de Segmento (`segsel`) y los atributos (`attr`) de manera que al usarse la macro defina una *Interrupt Gate* de nivel 0.
 Para el Selector de Segmento, recuerden que la rutina de atención de interrupción es un código que corre en el nivel del kernel. ¿Cuál sería un selector de segmento apropiado acorde a los índices definidos en la `GDT[segsel]`? ¿Y el valor de los atributos si usamos _Gate Size_ de 32 bits?
 
+Un selector apropiado seria un selector de segmento de nivel 0 que es el selector de indice 1 en nuestra GDT. El valor de D tiene que ser 1 porque tenemos que establecer un segmento de 32 bits.
+
 c) :pen_fountain: De manera similar, completar la macro `IDT_ENTRY3` para que defina interrupciones que puedan ser disparadas por código no privilegiado (nivel 3).
 
 2. Completar la función idt_init() con las entradas correspondientes a las interrupciones de reloj y teclado ¿Qué macro utilizarían?
+
+Tenemos que usar la macro IDT_ENTRY0() porque son interrupciones de hardware.
+(POR QUE LAS INTERRUPCIONES DE HARDWARE TIENEN QUE SER DESCRITAS POR UNA INTERRUPT GATE DE NIVEL 0????????????????!!!!!)
 
 3. Nos queda definir dos system calls. Estas son interrupciones de software que se van a poder usar con nivel de privilegio de usuario, en nuestro caso, nivel 3.
 Usar la macro correspondiente para definir system calls con número 88 y 98.
@@ -91,6 +105,11 @@ Completar la rutina asociada al reloj, para que por cada interrupción llame a l
 La función `next_clock` está definida en `isr.asm`.
 
 :pen_fountain: ¿Qué oficiaría de prólogo y epílogo de estas rutinas? ¿Qué marca el `iret` y por qué no usamos `ret`?
+
+Nada porque no hace falta, no hace falta inicializar un stack frame con una nueva base de la pila y un nuevo puntero al stack ni tampoco hace falta tener la pila alineada porque no estamos escribiendo codigo para libc entonces no hace falta seguir ninguna convención.
+Dicho eso, podria verse como buena practica resguardar el estado de los registros de proposito general porque el programa que se esta ejecuntando cuando ocurre la interrupción del reloj no debe enterarse de que acaba de ocurrir algo, por lo tanto cuando se haga el iret y la ejecución vuelva al programa que se estaba ejecutando antes de que ocurra la interrupción, dicho programa tiene que tener los mismos valores guardados en los registros de proposito general que tenia antes de la interrupción para que el programa siga funcionando.
+Pero como no hay convención si sabemos que la rutina no modifica el valor de ningún registro o como en este caso solo se llama a una función que tiene un pushad y popad adentro, entonces podemos no tener prologo ni epílogo.
+Iret desapila el error code (si es que hay), el eip, el cs, y el eflags que son los valores que se pushan al llamar a una interrupción y salta a ejecutar el codigo que esta apuntado por el eip. No usamos el ret porque el ret solo desapila el eip que es lo unico que se apila cuando se hace un call, en cambio cuando llamamos a una interrupción se apilan el error code, el eip, el cs, y el eflags.
 
 4. Completen la rutina de interrupción de teclado. La misma debe leer el scan code del puerto `0x60` y luego procesarlo con la función `process_scancode` provista en `keyboard_input.c`.
 
