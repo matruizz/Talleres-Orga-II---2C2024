@@ -162,7 +162,6 @@ e)  Suponiendo que el código de la tarea ocupa dos páginas y
 1 pag para el directorio
 1 pag para la tabla de paginas.
 
-
 f)  Completen las entradas referentes a MMU de `defines.h` y comprendan
     la función y motivación de dichos defines:
 
@@ -183,6 +182,8 @@ g)  ¿Qué es el buffer auxiliar de traducción (*translation lookaside
     en la TLB? Al desalojar una entrada determinada de la TLB ¿Se ve
     afectada la homóloga en la tabla original para algún caso?
 
+La tlb es una estructura de datos que guarda información sobre la paginación de direcciones recientemente accedidas, que sirve como una memoria cache y permite que cada vez que se quiere acceder a una dirección física no se tenga que realizar las lecturas de la pde, luego la pte y luego realizar las sumas correspondientes de offsets, guarda información relevante como el indice de la pde y el de la pte y los bits de la dirección física que esta en el descriptor de la página que se quiere acceder. Al introducir modificaciones en las estructuras de paginación.... QUEEEEEEE?
+
 ### Segunda parte: Activando el mecanismo de paginación.
 
 a)  Escriban el código de las funciones `mmu_next_free_kernel_page`,
@@ -190,7 +191,10 @@ a)  Escriban el código de las funciones `mmu_next_free_kernel_page`,
     completar la inicialización del directorio y tablas de páginas para
     el *kernel*.
 
+
   > Recuerden que las entradas del directorio y la tabla deben realizar un mapeo por identidad (las direcciones lineales son iguales a las direcciones físicas) para el rango reservado para el kernel, de `0x00000000` a `0x003FFFFF`, como ilustra la figura [2]. Esta función debe inicializar también el directorio de páginas en la dirección `0x25000` y las tablas de páginas según muestra la figura [1] ¿Cuántas entradas del directorio de página hacen falta?
+
+Hacen falta 1024 entradas de la tabla de páginas, cada entrada permite acceder a 4kb de dirección física y el identity mapping del kernel son los primeros 4mb de memoria, por lo tanto como 4mb == 2^22 / 4kb == 2^12 = 2^10 == 1024.
 
 b)  Completar el código para activar paginación en `kernel.asm`.
     Recuerden que es necesario inicializar el registro `CR3` y activar
@@ -209,6 +213,10 @@ b)  Completen el código de `copy_page`, ¿por qué es necesario mapear y
     desmapear las páginas de destino y fuente? ¿Qué función cumplen
     `SRC_VIRT_PAGE` y `DST_VIRT_PAGE`? ¿Por qué es necesario obtener el
     CR3 con rcr3()?
+
+Es necesario mapear las páginas porque el sistema solo accede a memoria através de la unidad de segmentación y paginación,
+por lo tanto no podemos tratar de acceder a direcciones físicas directamente, si o si tenemos que trabajar con direcciones
+virtuales y luego la mmu se encarga de hacer que el sistema trabaje con las direcciones físicas correspondientes. Luego tenemso que desmapear las paginas porque ya no las vamos a usar, la función solo busca copiar los contenidos de una página física a otra, la especificación no dice nada de dejar las páginas mapeadas.
 
 c)  Realicen una prueba donde se compruebe el funcionamiento de
     `copy_page`. Pueden usar gdb con el comando `x` para inspeccionar el

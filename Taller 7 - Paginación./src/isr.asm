@@ -15,6 +15,7 @@ extern pic_finish1
 extern kernel_exception
 
 extern process_scancode
+extern page_fault_handler
 
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -109,7 +110,6 @@ ISRE 10
 ISRE 11
 ISRE 12
 ISRE 13
-ISRE 14
 ISRNE 15
 ISRNE 16
 ISRE 17
@@ -117,11 +117,39 @@ ISRNE 18
 ISRNE 19
 ISRNE 20
 
+
+;; Rutina de atención de Page Fault
+;; -------------------------------------------------------------------------- ;;
+global _isr14
+
+_isr14:
+	; Estamos en un page fault.
+	pushad
+    ; COMPLETAR: llamar rutina de atención de page fault, pasandole la dirección que se intentó acceder
+    .ring0_exception:
+        push esp
+        call page_fault_handler
+	; Si llegamos hasta aca es que cometimos un page fault fuera del area compartida.
+    call kernel_exception
+    jmp $
+
+    .fin:
+	popad
+	add esp, 4 ; error code
+	iret
+
+
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 global _isr32
 ; COMPLETAR: Implementar la rutina
 _isr32:
+
+    pushad
+    call pic_finish1
+
+    call next_clock
+    popad
     iret
 
 ;; Rutina de atención del TECLADO
@@ -129,6 +157,18 @@ _isr32:
 global _isr33
 ; COMPLETAR: Implementar la rutina
 _isr33:
+    pushad
+
+    call pic_finish1
+
+    xor eax, eax    ;Limpio el eax
+    in al, 0x60     ;Leemos un byte por eso uso al
+
+    push eax
+    call process_scancode
+    pop eax
+
+    popad
     iret
 
 
@@ -138,11 +178,17 @@ _isr33:
 global _isr88
 ; COMPLETAR: Implementar la rutina
 _isr88:
+
+    ;No hago popad porque justamente quiero que el eax quede modificado
+    mov eax, 0x58
     iret
 
 global _isr98
 ; COMPLETAR: Implementar la rutina
 _isr98:
+
+    ;No hago popad porque justamente quiero que el eax quede modificado
+    mov eax, 0x62  
     iret
 
 ; PushAD Order
