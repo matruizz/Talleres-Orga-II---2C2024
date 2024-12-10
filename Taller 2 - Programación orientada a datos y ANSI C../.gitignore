@@ -1,0 +1,8 @@
+# Para evitar subir binarios o .o, ignoro todo en la carpeta solucion
+# menos los archivos de codigo
+src/*
+!src/*.c
+!src/*.h
+!src/*.asm
+!src/*.py
+!src/Makefile
