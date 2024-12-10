@@ -66,9 +66,10 @@ p[i][j] == el j-esimo puntero a ca de p[i]???
 lo que me confunde es como podes tener algo que a primera vista parece ser una cosa de
 2 dimensiones habiendo declarado algo de solo una dimesion.
 */
+
 void screen_draw_box(uint32_t fInit, uint32_t cInit, uint32_t fSize,
                      uint32_t cSize, uint8_t character, uint8_t attr) {
-  ca(*p)[VIDEO_COLS] = (ca(*)[VIDEO_COLS])VIDEO;  //p == puntero a un array de 80 elementos de tipo ca
+  ca(*p)[VIDEO_COLS] = (ca(*)[VIDEO_COLS])VIDEO;
   uint32_t f;
   uint32_t c;
   for (f = fInit; f < fInit + fSize; f++) {
@@ -78,6 +79,7 @@ void screen_draw_box(uint32_t fInit, uint32_t cInit, uint32_t fSize,
     }
   }
 }
+
 /*
 cada puntero apunta a un byte en especifico
 por ejemplo:

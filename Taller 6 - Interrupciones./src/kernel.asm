@@ -5,16 +5,12 @@
 
 %include "print.mac"
 
-
 global start
 
 
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
 extern GDT_DESC
-
-
 extern screen_draw_layout
-
 
 extern idt_init
 extern IDT_DESC
@@ -48,11 +44,10 @@ start_pm_len equ    $ - start_pm_msg
 ;; Punto de entrada del kernel.
 BITS 16
 start:
-
     ; COMPLETAR - Deshabilitar interrupciones
     cli ;Pone un 0 en el bit 9 (if) del registro EFLAGS lo que desactiva la respuesta a interrupciones de hardware.
         ;sti hace lo contrario
-    
+
     ; Cambiar modo de video a 80 X 50
     mov ax, 0003h
     int 10h ; set mode 03h
@@ -60,12 +55,10 @@ start:
     mov ax, 1112h
     int 10h ; load 8x8 font
 
-    
     ; COMPLETAR - Imprimir mensaje de bienvenida - MODO REAL
     ; (revisar las funciones definidas en print.mac y los mensajes se encuentran en la
     ; sección de datos)
     print_text_rm start_rm_msg, start_rm_len, 5, 25, 25
-
 
     ; COMPLETAR - Habilitar A20
     ; (revisar las funciones definidas en a20.asm)
@@ -104,10 +97,7 @@ modo_protegido:
 
     ; COMPLETAR - Inicializar pantalla
     call screen_draw_layout
-
-;FIN TP5 - PASAJE A MODO PROTEGIDO
-;-----------------------------------------------------------------------------------------------------------------------------;
-
+   
     ; COMPLETAR - Inicializar y cargar la IDT
     call idt_init   ;Inicializamos la idt
     lidt [IDT_DESC] ;Cargamos el descriptor de idt en el registro idtr
@@ -115,22 +105,21 @@ modo_protegido:
     ; COMPLETAR - Reiniciar y habilitar el controlador de interrupciones
     call pic_reset
     call pic_enable
-    sti
 
     ; COMPLETAR - Habilitar interrupciones
+    sti
+
     ; NOTA: Pueden chequear que las interrupciones funcionen forzando a que se
     ;       dispare alguna excepción (lo más sencillo es usar la instrucción
     ;       `int3`)
     ;int3
-    
 
     ; Probar Sys_call
-    int 88
-    int 98
+    int 88  ;Escribe un 88 en el eax
+    int 98  ;Escribe un 98 en el eax
 
     ; Probar generar una excepción
 
-   
     ; Ciclar infinitamente 
     mov eax, 0xFFFF
     mov ebx, 0xFFFF
